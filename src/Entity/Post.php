@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass=PostRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"="read:collection"},
- *      itemOperations={"get"={"normalization_context"={"groups"={"read:item", "read:collection"}}}},
+ *      itemOperations={"get"={"normalization_context"={"groups"={"read:item", "read:collection", "read:Post"}}}},
  * )
  */
 class Post
@@ -55,6 +55,7 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts")
+     * @Groups({"read:item"}) 
      */
     private $category;
 
