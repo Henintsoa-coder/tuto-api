@@ -7,16 +7,22 @@ use App\Repository\PostRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
  * @ApiResource(
  *      normalizationContext={"groups"="read:collection"},
+ *      denormalizationContext={"groups"="write:Post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={"validation_groups"={"create:Post"}}
+ *      },
  *      itemOperations={
  *          "put"={"denormalization_context"={"groups"={"put:Post"}}},
  *          "delete",
  *          "get"={"normalization_context"={"groups"={"read:item", "read:collection", "read:Post"}}}
- *      },
+ *      }
  * )
  */
 class Post
@@ -31,7 +37,12 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read:collection", "put:Post"})
+     * @Assert\Length(
+     *      min = 5,
+     *      minMessage = "This value is too short. It should have got at least {{ limit }} characters long",
+     *      groups={"create:Post"})
+     * )
+     * @Groups({"read:collection", "write:Post"})
      */
     private $title;
 
