@@ -15,8 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      normalizationContext={"groups"="read:collection"},
  *      denormalizationContext={"groups"="write:Post"},
  *      collectionOperations={
- *          "get",
- *          "post"={"validation_groups"={"create:Post"}}
+ *              "get",
+ *              "post"
  *      },
  *      itemOperations={
  *          "put"={"denormalization_context"={"groups"={"put:Post"}}},
@@ -70,8 +70,9 @@ class Post
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts")
-     * @Groups({"read:item", "write:Post"}) 
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts", cascade="persist")
+     * @Groups({"read:item", "write:Post"})
+     * @Assert\Valid 
      */
     private $category;
 
@@ -79,6 +80,10 @@ class Post
     {
         $this->createdAt = new DateTime();
         $this->updatedAt = new DateTime();
+    }
+
+    public static function validationGroups(self $post){
+        return ['create:Post'];
     }
 
     public function getId(): ?int
