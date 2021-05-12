@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "post"
  *      },
  *      itemOperations={
- *          "put"={"denormalization_context"={"groups"={"put:Post"}}},
+ *          "put",
  *          "delete",
  *          "get"={"normalization_context"={"groups"={"read:item", "read:collection", "read:Post"}}}
  *      }

@@ -20,7 +20,7 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read:id"})
+     * @Groups({"read:Post"})
      */
     private $id;
 
