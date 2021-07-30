@@ -11,23 +11,66 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Controller\PostPublishController;
+use App\Controller\PostCountController;
+use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
  * @ApiResource(
- *      normalizationContext={"groups"="read:collection"},
+ *      normalizationContext={
+ *          "groups"="read:collection",
+ *          "openapi_definition_name"="Collection"
+ *      },
  *      denormalizationContext={"groups"="write:Post"},
  *      paginationItemsPerPage=2,
  *      paginationMaximumItemsPerPage=2,
  *      paginationClientItemsPerPage=true,
  *      collectionOperations={
- *              "get",
- *              "post"
+ *             "get",
+ *             "post",
+ *          "count"={
+ *              "method"="GET",
+ *              "path"="/posts/count/",
+ *              "controller"=PostCountController::class,
+ *              "read"=false,
+ *              "pagination_enabled"=false,
+ *              "filters"={},
+ *              "openapi_context"={
+ *                  "summary" = "Récupère le nombre total d'articles",
+ *                  "parameters" = {
+ *                      {
+    *                      "in" = "query",
+    *                      "name" = "online",
+    *                      "schema"={
+    *                          "type"="integer",
+    *                          "maximum"=1,
+    *                          "minimum"=0
+    *                      },
+    *                      "description"="filtre les articles en ligne"
+ *                      }
+ *                  }
+ *              },
+ *          }
  *      },
  *      itemOperations={
  *          "put",
  *          "delete",
- *          "get"={"normalization_context"={"groups"={"read:item", "read:collection", "read:Post"}}}
+ *          "get"={
+ *              "normalization_context"={
+ *                  "groups"={"read:item", "read:collection", "read:Post"},
+ *                  "openapi_definition_name"="Details"
+ *              }
+ *          },
+ *          "publish"={
+ *              "method"="POST",
+ *              "path"="/posts/{id}/publish",
+ *              "controller"=PostPublishController::class,
+ *              "openapi_context"={
+ *                  "summary"="Permet de publier un article",
+ *                  "requestBody"={"content"={"application/json"={"schema"={}}}}
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(SearchFilter::class,properties={"id"="exact", "title"="partial"})
@@ -82,6 +125,13 @@ class Post
      * @Assert\Valid 
      */
     private $category;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : "0"})
+     * @Groups({"read:collection"})
+     * @ApiProperty(openapiContext={"type"="boolean", "description"="En ligne"})
+     */
+    private $online=false;
 
     public function __construct()
     {
@@ -166,6 +216,18 @@ class Post
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getOnline(): ?bool
+    {
+        return $this->online;
+    }
+
+    public function setOnline(bool $online): self
+    {
+        $this->online = $online;
 
         return $this;
     }
