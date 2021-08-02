@@ -49,8 +49,22 @@ use ApiPlatform\Core\Annotation\ApiProperty;
     *                      },
     *                      "description"="filtre les articles en ligne"
  *                      }
+ *                  },
+ *                  "responses":{
+ *                      200 : {
+ *                          "description":"OK",
+ *                          "content": {
+ *                              "application/json":{
+ *                                  "schema":{
+ *                                      "type":"integer",
+ *                                      "example":3
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
  *                  }
- *              },
+ * 
+ *              }
  *          }
  *      },
  *      itemOperations={
